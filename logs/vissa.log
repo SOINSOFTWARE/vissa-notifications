@@ -1,0 +1,18 @@
+2019-03-11 23:59:45 INFO  AbstractManagerFactory:54 - Before try to build entity manager factory
+2019-03-11 23:59:45 INFO  AbstractManagerFactory:55 - Package with database model: com.soinsoftware.vissa.model
+2019-03-11 23:59:45 INFO  AbstractManagerFactory:56 - Property file: /connection.properties
+2019-03-11 23:59:46 INFO  AbstractManagerFactory:133 - Property file loaded successfuly
+2019-03-11 23:59:46 INFO  HikariDataSource:79 - HikariCP pool HikariPool-0 is starting.
+2019-03-11 23:59:48 INFO  LocalContainerEntityManagerFactoryBean:349 - Building JPA container EntityManagerFactory for persistence unit 'Vissa'
+2019-03-11 23:59:48 INFO  LogHelper:31 - HHH000204: Processing PersistenceUnitInfo [
+	name: Vissa
+	...]
+2019-03-11 23:59:48 INFO  Version:37 - HHH000412: Hibernate Core {5.1.7.Final}
+2019-03-11 23:59:48 INFO  Environment:213 - HHH000206: hibernate.properties not found
+2019-03-11 23:59:48 INFO  Environment:317 - HHH000021: Bytecode provider name : javassist
+2019-03-11 23:59:48 INFO  Version:66 - HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2019-03-11 23:59:49 INFO  Dialect:156 - HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2019-03-11 23:59:51 INFO  Version:26 - HSEARCH000034: Hibernate Search 5.7.1.Final
+2019-03-11 23:59:53 INFO  LocalContainerEntityManagerFactoryBean:379 - Initialized JPA EntityManagerFactory for persistence unit 'Vissa'
+2019-03-11 23:59:53 INFO  AbstractManagerFactory:105 - After building entity manager factory
+2019-03-11 23:59:53 INFO  VissaClient:28 - Lotes por vencer1
