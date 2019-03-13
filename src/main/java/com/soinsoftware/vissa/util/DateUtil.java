@@ -9,7 +9,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-import com.soinsoftware.vissa.commons.Commons;
+import com.soinsoftware.vissa.commons.CommonsConstants;
 
 public class DateUtil {
 
@@ -29,7 +29,7 @@ public class DateUtil {
 		try {
 			if (ldt != null) {
 				Date date = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
-				SimpleDateFormat parseador = new SimpleDateFormat(Commons.FORMAT_DATE_TIME);
+				SimpleDateFormat parseador = new SimpleDateFormat(CommonsConstants.FORMAT_DATE_TIME);
 				parseDate = parseador.parse(dateToString(date));
 			}
 		} catch (Exception e) {
@@ -68,11 +68,31 @@ public class DateUtil {
 		String dateStr = null;
 		try {
 			if (date != null) {
-				SimpleDateFormat sdf = new SimpleDateFormat(Commons.FORMAT_DATE_TIME);
+				SimpleDateFormat sdf = new SimpleDateFormat(CommonsConstants.FORMAT_DATE_TIME);
 				dateStr = sdf.format(date);
 			}
 		} catch (Exception e) {
 			log.error("Error al convertir Date " + date + " a String");
+		}
+		return dateStr;
+
+	}
+	
+	/**
+	 * Metodo para convertir una fecha Date a String con un formato específico
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public static String dateToString(Date date, String formatDate) {
+		String dateStr = null;
+		try {
+			if (date != null) {
+				SimpleDateFormat sdf = new SimpleDateFormat(formatDate);
+				dateStr = sdf.format(date);
+			}
+		} catch (Exception e) {
+			log.error("Error al convertir Date " + date + " a String en formato: " + formatDate);
 		}
 		return dateStr;
 
@@ -88,7 +108,7 @@ public class DateUtil {
 		Date date = null;
 		try {
 			if (dateStr != null) {
-				SimpleDateFormat sdf = new SimpleDateFormat(Commons.FORMAT_DATE_TIME);
+				SimpleDateFormat sdf = new SimpleDateFormat(CommonsConstants.FORMAT_DATE_TIME);
 				date = sdf.parse(dateStr);
 			}
 		} catch (Exception e) {
@@ -159,7 +179,7 @@ public class DateUtil {
 		try {
 			if (ld != null) {
 				Date date = Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
-				SimpleDateFormat parseador = new SimpleDateFormat(Commons.FORMAT_DATE);
+				SimpleDateFormat parseador = new SimpleDateFormat(CommonsConstants.FORMAT_DATE);
 				parseDate = parseador.parse(dateToString(date));
 			}
 		} catch (Exception e) {
