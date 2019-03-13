@@ -16,6 +16,10 @@ public class CommonsConstants {
 	public static String SMS_PHONES_FROM;
 	public static Integer EXPIRATION_DAYS;
 	public static String MESSAGE_EXPIRATION;
+	public static String MAIL_HOST;
+	public static String MAIL_PORT;
+	public static String MAIL_USERNAME;
+	public static String MAIL_PASSWORD;
 
 	static {
 		if (!reloadProperties()) {
@@ -42,6 +46,11 @@ public class CommonsConstants {
 			String days = properties.getTextProperty("expiration.days").trim();
 			EXPIRATION_DAYS = days != null && !days.isEmpty() ? Integer.parseInt(days) : null;
 			MESSAGE_EXPIRATION = properties.getTextProperty("message.expiration");
+
+			MAIL_HOST = properties.getTextProperty("mail.smtp.host");
+			MAIL_PORT = properties.getTextProperty("mail.smtp.port");
+			MAIL_USERNAME = properties.getTextProperty("mail.smtp.username").trim();
+			MAIL_PASSWORD = properties.getTextProperty("mail.smtp.password").trim();
 
 		} catch (Exception e) {
 			log.error("Error al cargar propiedades: " + PROPERTY_FILE_PATH, e);

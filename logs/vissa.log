@@ -124,3 +124,17 @@ java.lang.NumberFormatException: For input string: "3;"
 2019-03-12 22:23:29 INFO  AbstractManagerFactory:105 - After building entity manager factory
 2019-03-12 22:23:29 INFO  VissaClient:32 - Cantidad de lotes por vencer: 1
 2019-03-12 22:23:31 INFO  SmsGenerator:35 - SM1b74ff5e59e844f1a59674d26b102338
+2019-03-12 22:50:07 INFO  AbstractManagerFactory:54 - Before try to build entity manager factory
+2019-03-12 22:50:07 INFO  AbstractManagerFactory:55 - Package with database model: com.soinsoftware.vissa.model
+2019-03-12 22:50:07 INFO  AbstractManagerFactory:56 - Property file: /connection.properties
+2019-03-12 22:50:10 INFO  AbstractManagerFactory:133 - Property file loaded successfuly
+2019-03-12 22:50:10 INFO  HikariDataSource:79 - HikariCP pool HikariPool-0 is starting.
+2019-03-12 22:50:13 INFO  LocalContainerEntityManagerFactoryBean:349 - Building JPA container EntityManagerFactory for persistence unit 'Vissa'
+2019-03-12 22:50:13 INFO  LogHelper:31 - HHH000204: Processing PersistenceUnitInfo [
+	name: Vissa
+	...]
+2019-03-12 22:50:13 INFO  Version:37 - HHH000412: Hibernate Core {5.1.7.Final}
+2019-03-12 22:50:13 INFO  Environment:213 - HHH000206: hibernate.properties not found
+2019-03-12 22:50:13 INFO  Environment:317 - HHH000021: Bytecode provider name : javassist
+2019-03-12 22:50:14 INFO  Version:66 - HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2019-03-12 22:50:14 INFO  Dialect:156 - HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
