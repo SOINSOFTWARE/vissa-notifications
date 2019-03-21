@@ -20,6 +20,10 @@ public class CommonsConstants {
 	public static String MAIL_PORT;
 	public static String MAIL_USERNAME;
 	public static String MAIL_PASSWORD;
+	public static String MAIL_FROM;
+	public static String MAIL_TO;
+	public static String MAIL_CONCILIATION_SUBJECT;
+	public static String SALESMAN_CONCILIATION_MSG;
 
 	static {
 		if (!reloadProperties()) {
@@ -51,6 +55,71 @@ public class CommonsConstants {
 			MAIL_PORT = properties.getTextProperty("mail.smtp.port");
 			MAIL_USERNAME = properties.getTextProperty("mail.smtp.username").trim();
 			MAIL_PASSWORD = properties.getTextProperty("mail.smtp.password").trim();
+			MAIL_FROM = properties.getTextProperty("mail.smtp.from").trim();
+			MAIL_TO = properties.getTextProperty("mail.smtp.to").trim();
+			MAIL_CONCILIATION_SUBJECT = properties.getTextProperty("mail.smtp.conciliation.subject").trim();
+
+			SALESMAN_CONCILIATION_MSG = "<html>\r\n" + 
+					"<h1> Cuadre de caja vendedor SALESMAN</h1>\r\n" + 
+					"<p>\r\n" + 
+					"<table border=\"1\">\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Base caja</td>\r\n" + 
+					"    <td>BASE</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Caja N.2</td>\r\n" + 
+					"    <td>SALES</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Sobrante</td>\r\n" + 
+					"    <td>REMANT_SALE</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Recaudo Vtas. Crédito</td>\r\n" + 
+					"    <td>CREDIT_COLLECTION</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"    <tr>\r\n" + 
+					"    <td><b>TOTAL VENTAS</b></td>\r\n" + 
+					"    <td><b>TOTAL_SALE</b></td> \r\n" + 
+					"  </tr>\r\n" + 
+					"</table>\r\n" + 
+					"</p>\r\n" + 
+					"\r\n" + 
+					"<p>\r\n" + 
+					"<table border=\"1\">\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Gastos generales</td>\r\n" + 
+					"    <td>EXPENSES</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Pago a proveedores</td>\r\n" + 
+					"    <td>SUPPLIER</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Faltante</td>\r\n" + 
+					"    <td>REMANT_SALE</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td><b>TOTAL EGRESOS</b></td>\r\n" + 
+					"    <td><b>TOTAL_EGRESS</b></td> \r\n" + 
+					"  </tr>  \r\n" + 
+					"</table>\r\n" + 
+					"</p>\r\n" + 
+					"<p>\r\n" + 
+					"<table border=\"1\">\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td><b>VENTA CREDITO</b></td>\r\n" + 
+					"    <td><b>TOTAL_CREDIT</b></td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td><b>EFECTIVO NETO</b></td>\r\n" + 
+					"    <td><b>TOTAL_CASH</b></td> \r\n" + 
+					"  </tr> \r\n" + 
+					"</table>\r\n" + 
+					"</p>\r\n" + 
+					"\r\n" + 
+					"</hmtl>";
 
 		} catch (Exception e) {
 			log.error("Error al cargar propiedades: " + PROPERTY_FILE_PATH, e);

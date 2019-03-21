@@ -1,5 +1,6 @@
 package com.soinsoftware.vissa.client;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import com.soinsoftware.vissa.bll.LotBll;
 import com.soinsoftware.vissa.commons.CommonsConstants;
 import com.soinsoftware.vissa.model.CashConciliation;
 import com.soinsoftware.vissa.model.Lot;
+import com.soinsoftware.vissa.util.CommonsEmailService;
 import com.soinsoftware.vissa.util.DateUtil;
 import com.soinsoftware.vissa.util.SmsGenerator;
 
@@ -72,6 +74,37 @@ public class VissaClient {
 			conciliationBll = CashRegisterConciliationBll.getInstance();
 			List<CashConciliation> conciliations = conciliationBll.select(date);
 			log.info(strLog + " conciliations: " + conciliations.size());
+
+			String message = CommonsConstants.SALESMAN_CONCILIATION_MSG;
+			String subject = "";
+			for (CashConciliation conciliation : conciliations) {
+
+				// Si es el cuadre del vendedor
+				if (conciliation.getCashRegisterNumber().equals("2")) {
+					subject = "Vendedor";
+					message = CommonsConstants.SALESMAN_CONCILIATION_MSG;
+					message = message.replace("SALESMAN",
+							conciliation.getPerson().getName() + " " + conciliation.getPerson().getLastName());
+					message = message.replace("BASE", String.valueOf(conciliation.getCashBase()));
+					message = message.replace("SALES", String.valueOf(conciliation.getSales()));
+					message = message.replace("REMANT_SALE", String.valueOf(conciliation.getRemnantSale()));
+					message = message.replace("CREDIT_COLLECTION", String.valueOf(conciliation.getCreditCollection()));
+					message = message.replace("TOTAL_SALE", String.valueOf(conciliation.getTotalIngress()));
+					message = message.replace("EXPENSES", String.valueOf(conciliation.getGeneralExpense()));
+					message = message.replace("SUPPLIER", String.valueOf(conciliation.getSupplierPayments()));
+					message = message.replace("REMANT_SALE", String.valueOf(conciliation.getRemnantSale()));
+					message = message.replace("TOTAL_EGRESS", String.valueOf(conciliation.getTotalEgress()));
+					message = message.replace("TOTAL_CREDIT", String.valueOf(conciliation.getTotalCredit()));
+					message = message.replace("TOTAL_CASH", String.valueOf(conciliation.getTotalCash()));
+				} else {// Cuadre del administrador
+					subject = "Administrador";
+					message = CommonsConstants.SALESMAN_CONCILIATION_MSG;
+				}
+
+				CommonsEmailService.send(CommonsConstants.MAIL_FROM,
+						Arrays.asList(new String(CommonsConstants.MAIL_TO)),
+						CommonsConstants.MAIL_CONCILIATION_SUBJECT + " " + subject, message);
+			}
 		} catch (Exception e) {
 			log.error(strLog + "[Excepion]" + e.getMessage());
 			e.printStackTrace();

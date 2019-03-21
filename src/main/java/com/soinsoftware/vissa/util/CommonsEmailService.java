@@ -31,8 +31,70 @@ public class CommonsEmailService {
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
 		try {
+			String text = "<b><h1>Cuadre de caja vendedor</h1></b></p>";
+			text = text + "Base caja :  </n>";
+			text = "<html>\r\n" + 
+					"<p>\r\n" + 
+					"<table border=\"1\">\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Base caja</td>\r\n" + 
+					"    <td>BASE</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Caja N.2</td>\r\n" + 
+					"    <td>SALES</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Sobrante</td>\r\n" + 
+					"    <td>REMANT_SALE</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Recaudo Vtas. Crédito</td>\r\n" + 
+					"    <td>SALES</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"    <tr>\r\n" + 
+					"    <td><b>TOTAL VENTAS</b></td>\r\n" + 
+					"    <td><b>TOTAL_SALE</b></td> \r\n" + 
+					"  </tr>\r\n" + 
+					"</table>\r\n" + 
+					"</p>\r\n" + 
+					"\r\n" + 
+					"<p>\r\n" + 
+					"<table border=\"1\">\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Gastos generales</td>\r\n" + 
+					"    <td>EXPENSES</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Pago a proveedores</td>\r\n" + 
+					"    <td>SUPPLIER</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Faltante</td>\r\n" + 
+					"    <td>REMANT_SALE</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td><b>TOTAL EGRESOS</b></td>\r\n" + 
+					"    <td><b>TOTAL_EGRESS</b></td> \r\n" + 
+					"  </tr>  \r\n" + 
+					"</table>\r\n" + 
+					"</p>\r\n" + 
+					"<p>\r\n" + 
+					"<table border=\"1\">\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td><b>VENTA CRÉDITO</b></td>\r\n" + 
+					"    <td><b>TOTAL_CREDIT</b></td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td><b>EFECTIVO NETO</b></td>\r\n" + 
+					"    <td><b>TOTAL_CASH</b></td> \r\n" + 
+					"  </tr> \r\n" + 
+					"</table>\r\n" + 
+					"</p>\r\n" + 
+					"\r\n" + 
+					"</hmtl>";
 			new CommonsEmailService().send("FLORLI319@GMAIL.COM", Arrays.asList(new String("florli319@gmail.com")),
-					"mail prueba", "prueba");
+					"mail prueba", text);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -110,7 +172,7 @@ public class CommonsEmailService {
 		// set its properties accordingly
 		email.setFrom(from);
 		email.addTo("florli319@gmail.com");
-		email.addTo("carlosandres.rodriguezpatino@gmail.com");
+		// email.addTo("carlosandres.rodriguezpatino@gmail.com");
 		email.setSubject(subject);
 		email.setHtmlMsg(text);
 
@@ -125,7 +187,7 @@ public class CommonsEmailService {
 		}
 
 		// send it!
-		 email.send();
+		email.send();
 
 		Properties props = new Properties();
 
@@ -161,7 +223,7 @@ public class CommonsEmailService {
 			Transport t = session.getTransport("smtp");
 
 			t.connect("florli319@gmail.com", "Google#319");
-			//t.sendMessage(message, message.getAllRecipients());
+			// t.sendMessage(message, message.getAllRecipients());
 			t.close();
 
 		} catch (AddressException e) {
