@@ -6,7 +6,7 @@ public class CommonsConstants {
 
 	protected static final Logger log = Logger.getLogger(CommonsConstants.class);
 
-	private static final String PROPERTY_FILE_PATH = "C:\\Users\\carlosandres\\git\\vissa-notifications\\src\\main\\resources\\vissa-notification.properties";
+	private static final String PROPERTY_FILE_PATH = "E:\\Documents\\GitHub\\vissa-notifications\\src\\main\\resources\\vissa-notification.properties";
 
 	public static String FORMAT_DATE_TIME;
 	public static String FORMAT_DATE;
@@ -24,6 +24,7 @@ public class CommonsConstants {
 	public static String MAIL_TO;
 	public static String MAIL_CONCILIATION_SUBJECT;
 	public static String SALESMAN_CONCILIATION_MSG;
+	public static String ADMON_CONCILIATION_MSG;
 
 	static {
 		if (!reloadProperties()) {
@@ -119,6 +120,33 @@ public class CommonsConstants {
 					"</table>\r\n" + 
 					"</p>\r\n" + 
 					"\r\n" + 
+					"</hmtl>";
+			
+			
+			ADMON_CONCILIATION_MSG = "<html>\r\n" + 
+					"<h1> Cuadre de caja administrador ADMINISTRATOR</h1>\r\n" + 
+					"<p>\r\n" + 
+					"<table border=\"1\">\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Base caja</td>\r\n" + 
+					"    <td>BASE</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Pago a proveedores</td>\r\n" + 
+					"    <td align=\"right\">SUPPLIER_PAYMENTS</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td>Préstamo para pago a proveedores</td>\r\n" + 
+					"    <td>SUPPLIER_LOANS</td> \r\n" + 
+					"  </tr>\r\n" + 
+					"  <tr>\r\n" + 
+					"    <td><b>Saldo</b></td>\r\n" + 
+					"    <td>BALANCE</td> \r\n" + 					
+					"</table>\r\n" + 
+					"</p>\r\n" + 
+					"\r\n" + 
+					"<p>\r\n" + 
+			
 					"</hmtl>";
 
 		} catch (Exception e) {

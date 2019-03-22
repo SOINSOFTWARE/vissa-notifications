@@ -71,6 +71,11 @@ public class VissaClient {
 		String strLog = "[getDailyConciliation] ";
 		try {
 			Date date = DateUtils.truncate(new Date(), Calendar.DATE);
+
+			Date endDate = DateUtils.addHours(date, 23);
+			endDate = DateUtils.addMinutes(endDate, 59);
+			endDate = DateUtils.addSeconds(endDate, 59);
+
 			conciliationBll = CashRegisterConciliationBll.getInstance();
 			List<CashConciliation> conciliations = conciliationBll.select(date);
 			log.info(strLog + " conciliations: " + conciliations.size());
@@ -98,7 +103,15 @@ public class VissaClient {
 					message = message.replace("TOTAL_CASH", String.valueOf(conciliation.getTotalCash()));
 				} else {// Cuadre del administrador
 					subject = "Administrador";
-					message = CommonsConstants.SALESMAN_CONCILIATION_MSG;
+					message = CommonsConstants.ADMON_CONCILIATION_MSG;
+
+					message = message.replace("ADMINISTRATOR",
+							conciliation.getPerson().getName() + " " + conciliation.getPerson().getLastName());
+					message = message.replace("BASE", String.valueOf(conciliation.getCashBase()));
+					message = message.replace("SUPPLIER_PAYMENTS", String.valueOf(conciliation.getSupplierPayments()));
+					message = message.replace("SUPPLIER_LOANS", String.valueOf(conciliation.getSupplierPaymentsLoan()));
+					message = message.replace("BALANCE", String.valueOf(conciliation.getBalance()));
+
 				}
 
 				CommonsEmailService.send(CommonsConstants.MAIL_FROM,
