@@ -19,24 +19,43 @@ import com.soinsoftware.vissa.util.SmsGenerator;
 
 public class VissaClient {
 
-	protected static final Logger log = Logger.getLogger(VissaClient.class);
-	private LotBll lotBll;
-	private CashRegisterConciliationBll conciliationBll;
+	private static final String PRODUCTS_TO_EXPIRE = "vencimiento";
+	private static final String DAILY_CONCILIATION = "conciliacion";
+	private static final List<String> REPORTS = Arrays.asList(DAILY_CONCILIATION, PRODUCTS_TO_EXPIRE);
+	private static final Logger log = Logger.getLogger(VissaClient.class);
 
 	public static void main(String[] args) {
-		// new VissaClient().getProductsToExpire();
-		new VissaClient().getDailyConciliation();
+		if (args.length == 0) {
+			log.warn("Debes enviar como parametro el tipo de reporte que deseas: " + REPORTS);
+			return;
+		}
+		if (!REPORTS.contains(args[0])) {
+			log.warn("Opcion no valida, escoja una de las siguientes: " + REPORTS);
+			return;
+		}
+		generateReport(args[0]);
 
+	}
+	
+	private static void generateReport(final String report) {
+		switch (report) {
+		case DAILY_CONCILIATION:
+			generateDailyConciliationReport();
+			break;
+		case PRODUCTS_TO_EXPIRE:
+			generateProductsToExpireReport();
+			break;
+		}
 	}
 
 	/**
-	 * Método para obtener los productos a expirar
+	 * Mï¿½todo para obtener los productos a expirar
 	 */
-	private void getProductsToExpire() {
+	private static void generateProductsToExpireReport() {
 		String strLog = "[getProductsToExpire] ";
 		try {
 			if (CommonsConstants.EXPIRATION_DAYS != null) {
-				lotBll = LotBll.getInstance();
+				LotBll lotBll = LotBll.getInstance();
 
 				Date expirationDate = DateUtil.addDaysToDate(DateUtil.localDateTimeToDate(DateUtil.getDefaultIniDate()),
 						CommonsConstants.EXPIRATION_DAYS);
@@ -55,7 +74,7 @@ public class VissaClient {
 					SmsGenerator.sendSMS(CommonsConstants.MESSAGE_EXPIRATION + items);
 				}
 			} else {
-				log.error(strLog + "No hay días de validación para fecha de vencimiennto configurados: "
+				log.error(strLog + "No hay dï¿½as de validaciï¿½n para fecha de vencimiennto configurados: "
 						+ CommonsConstants.EXPIRATION_DAYS);
 			}
 
@@ -65,9 +84,9 @@ public class VissaClient {
 	}
 
 	/**
-	 * Método para obtener los cuadres de caja de un día
+	 * Mï¿½todo para obtener los cuadres de caja de un dï¿½a
 	 */
-	private void getDailyConciliation() {
+	private static void generateDailyConciliationReport() {
 		String strLog = "[getDailyConciliation] ";
 		try {
 			Date date = DateUtils.truncate(new Date(), Calendar.DATE);
@@ -76,7 +95,7 @@ public class VissaClient {
 			endDate = DateUtils.addMinutes(endDate, 59);
 			endDate = DateUtils.addSeconds(endDate, 59);
 
-			conciliationBll = CashRegisterConciliationBll.getInstance();
+			CashRegisterConciliationBll conciliationBll = CashRegisterConciliationBll.getInstance();
 			List<CashConciliation> conciliations = conciliationBll.select(date);
 			log.info(strLog + " conciliations: " + conciliations.size());
 
@@ -123,5 +142,4 @@ public class VissaClient {
 			e.printStackTrace();
 		}
 	}
-
 }
