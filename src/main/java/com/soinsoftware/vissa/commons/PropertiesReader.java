@@ -21,6 +21,7 @@ public class PropertiesReader {
 	}
 
 	public void loadProperties(String propertiesFile) throws IOException {
+		System.out.println("propertiesFile " + propertiesFile);
 		if (this.propertiesLoaded.contains(propertiesFile)) {
 			return;
 		}

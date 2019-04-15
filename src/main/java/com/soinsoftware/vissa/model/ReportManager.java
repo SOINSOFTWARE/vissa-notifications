@@ -1,4 +1,4 @@
-package com.soinsoftware.vissa.client;
+package com.soinsoftware.vissa.model;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -10,72 +10,52 @@ import org.apache.log4j.Logger;
 
 import com.soinsoftware.vissa.bll.CashRegisterConciliationBll;
 import com.soinsoftware.vissa.bll.LotBll;
+import com.soinsoftware.vissa.bll.ProductBll;
+import com.soinsoftware.vissa.bll.UserBll;
+import com.soinsoftware.vissa.common.EComparatorType;
 import com.soinsoftware.vissa.commons.CommonsConstants;
-import com.soinsoftware.vissa.model.CashConciliation;
-import com.soinsoftware.vissa.model.Lot;
 import com.soinsoftware.vissa.util.CommonsEmailService;
 import com.soinsoftware.vissa.util.DateUtil;
 import com.soinsoftware.vissa.util.SmsGenerator;
 
-public class VissaClient {
+public class ReportManager {
 
-	private static final String PRODUCTS_TO_EXPIRE = "vencimiento";
-	private static final String DAILY_CONCILIATION = "conciliacion";
-	private static final List<String> REPORTS = Arrays.asList(DAILY_CONCILIATION, PRODUCTS_TO_EXPIRE);
-	private static final Logger log = Logger.getLogger(VissaClient.class);
-
-	public static void main(String[] args) {
-		if (args.length == 0) {
-			log.warn("Debes enviar como parametro el tipo de reporte que deseas: " + REPORTS);
-			return;
-		}
-		if (!REPORTS.contains(args[0])) {
-			log.warn("Opcion no valida, escoja una de las siguientes: " + REPORTS);
-			return;
-		}
-		generateReport(args[0]);
-
-	}
-	
-	private static void generateReport(final String report) {
-		switch (report) {
-		case DAILY_CONCILIATION:
-			generateDailyConciliationReport();
-			break;
-		case PRODUCTS_TO_EXPIRE:
-			generateProductsToExpireReport();
-			break;
-		}
-	}
+	private static final Logger log = Logger.getLogger(ReportManager.class);
 
 	/**
-	 * Mï¿½todo para obtener los productos a expirar
+	 * Metodo para obtener los productos a expirar y generar reporte
 	 */
-	private static void generateProductsToExpireReport() {
-		String strLog = "[getProductsToExpire] ";
+	public void lotsToExpireReport() {
+		String strLog = "[lotsToExpireReport] ";
 		try {
-			if (CommonsConstants.EXPIRATION_DAYS != null) {
+			if (CommonsConstants.LOT_EXPIRATION_DAYS != null) {
 				LotBll lotBll = LotBll.getInstance();
 
 				Date expirationDate = DateUtil.addDaysToDate(DateUtil.localDateTimeToDate(DateUtil.getDefaultIniDate()),
-						CommonsConstants.EXPIRATION_DAYS);
+						CommonsConstants.LOT_EXPIRATION_DAYS);
 				List<Lot> lots = lotBll.select(expirationDate);
 				log.info(strLog + "Cantidad de lotes por vencer: " + lots.size());
 
 				if (lots.size() > 0) {
 					String items = "";
 					for (Lot lot : lots) {
-						items = items + "Producto: " + lot.getProduct().getName() + ", Lote: " + lot.getCode()
-								+ ", Fecha vencimiento: "
-								+ DateUtil.dateToString(lot.getExpirationDate(), CommonsConstants.FORMAT_DATE) + ".   ";
-
+						// Se validan solo los lotes con stock
+						if (lot.getQuantity() > 0.0) {
+							items = items + "Producto: " + lot.getProduct().getName() + ", Lote: " + lot.getCode()
+									+ ", Fecha vencimiento: "
+									+ DateUtil.dateToString(lot.getExpirationDate(), CommonsConstants.FORMAT_DATE)
+									+ ".   ";
+						}
 					}
 
-					SmsGenerator.sendSMS(CommonsConstants.MESSAGE_EXPIRATION + items);
+					// Enviar por SMS el mensaje
+					SmsGenerator.sendSMS(CommonsConstants.LOT_EXPIRATION_MESSAGE + items);
+				} else {
+					log.info(strLog + "No hay lotes próximos a vencerse");
 				}
 			} else {
-				log.error(strLog + "No hay dï¿½as de validaciï¿½n para fecha de vencimiennto configurados: "
-						+ CommonsConstants.EXPIRATION_DAYS);
+				log.error(strLog + "No hay dias de validacion configurados para fecha de vencimiennto: "
+						+ CommonsConstants.LOT_EXPIRATION_DAYS);
 			}
 
 		} catch (Exception e) {
@@ -84,10 +64,54 @@ public class VissaClient {
 	}
 
 	/**
-	 * Mï¿½todo para obtener los cuadres de caja de un dï¿½a
+	 * Metodo para obtener los productos cuyo stock se finalizará
 	 */
-	private static void generateDailyConciliationReport() {
-		String strLog = "[getDailyConciliation] ";
+	public void productsToEndStockReport() {
+		String strLog = "[productsToEndStockReport] ";
+		try {
+			if (CommonsConstants.PRODUCT_STOCK != null) {
+				ProductBll productBll = ProductBll.getInstance();
+
+				// Umbral de validación de stock
+				Double stock = CommonsConstants.PRODUCT_STOCK;
+
+				// Se cosultan los productos que están bajo el umbral
+				List<Product> products = productBll.selectByStock(stock, EComparatorType.EQ);
+				log.info(strLog + "Cantidad de productos con stock a finalizar: " + products.size());
+
+				if (products != null && !products.isEmpty()) {
+					String message = "<html>" + CommonsConstants.PRODUCT_STOCK_MESSAGE;
+					String items = "";
+					for (Product product : products) {
+						items = items + "<p>Producto: " + product.getName() + ", Stock: " + product.getStock()
+								+ ". </p>";
+					}
+
+					message += message + items + "</html>";
+					// Enviar por SMS el mensaje
+					// SmsGenerator.sendSMS(CommonsConstants.PRODUCT_STOCK_MESSAGE + items);
+
+					// Enviar por correo electronico el cuadre de caja para vendedor y administrador
+					CommonsEmailService.send(CommonsConstants.MAIL_FROM,
+							Arrays.asList(new String(CommonsConstants.MAIL_TO)),
+							CommonsConstants.PRODUCT_STOCK_SUBJECT + " ", message);
+					log.info(strLog + "Email enviado");
+				}
+			} else {
+				log.error(strLog + "No hay dias de validacion configurados para stock de productos : "
+						+ CommonsConstants.PRODUCT_STOCK);
+			}
+
+		} catch (Exception e) {
+			log.error(strLog + "[Excepion]" + e.getMessage());
+		}
+	}
+
+	/**
+	 * Metodo para obtener los cuadres de caja de un dia y enviarlos por correo
+	 */
+	public void dailyConciliationReport() {
+		String strLog = "[dailyConciliationReport] ";
 		try {
 			Date date = DateUtils.truncate(new Date(), Calendar.DATE);
 
@@ -96,15 +120,19 @@ public class VissaClient {
 			endDate = DateUtils.addSeconds(endDate, 59);
 
 			CashRegisterConciliationBll conciliationBll = CashRegisterConciliationBll.getInstance();
+			UserBll userBll = UserBll.getInstance();
 			List<CashConciliation> conciliations = conciliationBll.select(date);
 			log.info(strLog + " conciliations: " + conciliations.size());
 
 			String message = CommonsConstants.SALESMAN_CONCILIATION_MSG;
 			String subject = "";
 			for (CashConciliation conciliation : conciliations) {
+				Person person = conciliation.getPerson();
+				User user = userBll.select(person);
+				String role = user.getRole().getName();
 
 				// Si es el cuadre del vendedor
-				if (conciliation.getCashRegisterNumber().equals("2")) {
+				if (role.equals(ERole.SALESMAN.getName())) {
 					subject = "Vendedor";
 					message = CommonsConstants.SALESMAN_CONCILIATION_MSG;
 					message = message.replace("SALESMAN",
@@ -120,7 +148,8 @@ public class VissaClient {
 					message = message.replace("TOTAL_EGRESS", String.valueOf(conciliation.getTotalEgress()));
 					message = message.replace("TOTAL_CREDIT", String.valueOf(conciliation.getTotalCredit()));
 					message = message.replace("TOTAL_CASH", String.valueOf(conciliation.getTotalCash()));
-				} else {// Cuadre del administrador
+
+				} else if (role.equals(ERole.ADMINISTRATOR.getName())) {// Cuadre del administrador
 					subject = "Administrador";
 					message = CommonsConstants.ADMON_CONCILIATION_MSG;
 
@@ -133,6 +162,7 @@ public class VissaClient {
 
 				}
 
+				// Enviar por correo electronico el cuadre de caja para vendedor y administrador
 				CommonsEmailService.send(CommonsConstants.MAIL_FROM,
 						Arrays.asList(new String(CommonsConstants.MAIL_TO)),
 						CommonsConstants.MAIL_CONCILIATION_SUBJECT + " " + subject, message);
@@ -142,4 +172,5 @@ public class VissaClient {
 			e.printStackTrace();
 		}
 	}
+
 }

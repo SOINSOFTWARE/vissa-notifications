@@ -32,7 +32,8 @@ public class SmsGenerator {
 			for (String phoneObj : phonesTo) {
 				PhoneNumber phoneTo = new PhoneNumber(phoneObj);
 				Message message = Message.creator(phoneTo, phoneFrom, smsMessage).create();
-				log.info(message.getSid());
+				log.info(strLog + message.getSid());
+				log.info(strLog + "Mensaje enviado:" + message);
 			}
 		} catch (Exception e) {
 			log.error(strLog + "[Exception] " + e.getMessage());
