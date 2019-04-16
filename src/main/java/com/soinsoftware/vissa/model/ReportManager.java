@@ -76,7 +76,7 @@ public class ReportManager {
 				Double stock = CommonsConstants.PRODUCT_STOCK;
 
 				// Se cosultan los productos que están bajo el umbral
-				List<Product> products = productBll.selectByStock(stock, EComparatorType.EQ);
+				List<Product> products = productBll.selectByStock(stock, EComparatorType.LE);
 				log.info(strLog + "Cantidad de productos con stock a finalizar: " + products.size());
 
 				if (products != null && !products.isEmpty()) {
@@ -87,13 +87,13 @@ public class ReportManager {
 								+ ". </p>";
 					}
 
-					message +=  items + "</html>";
+					message += items + "</html>";
 					// Enviar por SMS el mensaje
 					// SmsGenerator.sendSMS(CommonsConstants.PRODUCT_STOCK_MESSAGE + items);
 
 					// Enviar por correo electronico el cuadre de caja para vendedor y administrador
 					CommonsEmailService.send(CommonsConstants.MAIL_FROM,
-							Arrays.asList(new String(CommonsConstants.MAIL_TO)),
+							Arrays.asList(CommonsConstants.MAIL_TO.split(";")),
 							CommonsConstants.PRODUCT_STOCK_SUBJECT + " ", message);
 					log.info(strLog + "Email enviado");
 				}
@@ -163,8 +163,8 @@ public class ReportManager {
 				}
 
 				// Enviar por correo electronico el cuadre de caja para vendedor y administrador
-				CommonsEmailService.send(CommonsConstants.MAIL_FROM,
-						Arrays.asList(new String(CommonsConstants.MAIL_TO)),
+
+				CommonsEmailService.send(CommonsConstants.MAIL_FROM, Arrays.asList(CommonsConstants.MAIL_TO.split(";")),
 						CommonsConstants.MAIL_CONCILIATION_SUBJECT + " " + subject, message);
 			}
 		} catch (Exception e) {
