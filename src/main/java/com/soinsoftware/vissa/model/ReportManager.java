@@ -87,7 +87,7 @@ public class ReportManager {
 								+ ". </p>";
 					}
 
-					message += message + items + "</html>";
+					message +=  items + "</html>";
 					// Enviar por SMS el mensaje
 					// SmsGenerator.sendSMS(CommonsConstants.PRODUCT_STOCK_MESSAGE + items);
 
