@@ -14,7 +14,10 @@ public class ReportClient {
 	private static final String EXPIRATION = "vencimiento";
 	private static final String DAILY_CONCILIATION = "conciliacion";
 	private static final String PRODUCT_STOCK = "productStock";
-	private static final List<String> REPORTS = Arrays.asList(DAILY_CONCILIATION, EXPIRATION, PRODUCT_STOCK);
+	private static final String PURCHASE_PENDING = "comprasPendientes";
+	private static final String SALE_PENDING = "ventasPendientes";
+	private static final List<String> REPORTS = Arrays.asList(DAILY_CONCILIATION, EXPIRATION, PRODUCT_STOCK,
+			PURCHASE_PENDING, SALE_PENDING);
 	private static final Logger log = Logger.getLogger(ReportClient.class);
 
 	public static void main(String[] args) {
@@ -51,7 +54,14 @@ public class ReportClient {
 		case PRODUCT_STOCK:
 			manager.productsToEndStockReport();
 			break;
+		case PURCHASE_PENDING:
+			manager.purchasePending();
+			break;
+		case SALE_PENDING:
+			manager.salePending();
+			break;
 		}
+
 	}
 
 }

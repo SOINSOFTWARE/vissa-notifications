@@ -33,6 +33,9 @@ public class CommonsConstants {
 	public static String ADMON_CONCILIATION_MSG;
 	public static String REPORT_EXPIRATION;
 	public static String REPORT_CONCILIATION;
+	public static Integer PAYMENT_PENDING_DAYS;
+	public static String PAYMENT_PENDING_MESSAGE;
+	public static String PAYMENT_PENDING_SUBJECT;
 
 	static {
 		if (PROPERTY_FILE_PATH != null) {
@@ -83,6 +86,11 @@ public class CommonsConstants {
 			MAIL_PASSWORD = properties.getTextProperty("mail.smtp.password").trim();
 			MAIL_FROM = properties.getTextProperty("mail.smtp.from").trim();
 			MAIL_TO = properties.getTextProperty("mail.smtp.to").trim();
+			
+			String paymentDays = StringUtility.deleteWhitespace(properties.getTextProperty("pending.payments.days"));
+			PAYMENT_PENDING_DAYS = Integer.parseInt(paymentDays);
+			PAYMENT_PENDING_MESSAGE = properties.getTextProperty("pending.payments.message");
+			PAYMENT_PENDING_SUBJECT = properties.getTextProperty("pending.payments.subject");
 
 			// Conciliation
 			MAIL_CONCILIATION_SUBJECT = properties.getTextProperty("mail.smtp.conciliation.subject").trim();

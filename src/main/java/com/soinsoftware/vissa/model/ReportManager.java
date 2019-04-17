@@ -9,6 +9,8 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 
 import com.soinsoftware.vissa.bll.CashRegisterConciliationBll;
+import com.soinsoftware.vissa.bll.DocumentBll;
+import com.soinsoftware.vissa.bll.DocumentTypeBll;
 import com.soinsoftware.vissa.bll.LotBll;
 import com.soinsoftware.vissa.bll.ProductBll;
 import com.soinsoftware.vissa.bll.UserBll;
@@ -17,6 +19,7 @@ import com.soinsoftware.vissa.commons.CommonsConstants;
 import com.soinsoftware.vissa.util.CommonsEmailService;
 import com.soinsoftware.vissa.util.DateUtil;
 import com.soinsoftware.vissa.util.SmsGenerator;
+import com.soinsoftware.vissa.util.StringUtility;
 
 public class ReportManager {
 
@@ -171,6 +174,69 @@ public class ReportManager {
 			log.error(strLog + "[Excepion]" + e.getMessage());
 			e.printStackTrace();
 		}
+	}
+
+	public List<Document> purchasePending() {
+		return pendingPaymentsReport(ETransactionType.ENTRADA);
+	}
+
+	public List<Document> salePending() {
+		return pendingPaymentsReport(ETransactionType.SALIDA);
+	}
+
+	/**
+	 * Generar reporte de facturas pendientes por pagar
+	 * 
+	 * @param transactiontype
+	 * @return
+	 */
+
+	private List<Document> pendingPaymentsReport(ETransactionType transactiontype) {
+		String strLog = "[getPendingPayments] ";
+		List<Document> documents = null;
+		try {
+			DocumentBll documentBll = DocumentBll.getInstance();
+			DocumentTypeBll documentTypeBll = DocumentTypeBll.getInstance();
+			int days = CommonsConstants.PAYMENT_PENDING_DAYS;
+			Date expirationDateTmp = DateUtils.addDays(new Date(), days);
+			expirationDateTmp = DateUtils.truncate(expirationDateTmp, Calendar.DATE);
+			Date expirationDate = com.soinsoftware.vissa.commons.DateUtil.endDate(expirationDateTmp);
+
+			List<DocumentType> types = documentTypeBll.select(transactiontype);
+			documents = documentBll.selectByExpirationDate(types, expirationDate, EPaymentStatus.PENDING.getName(),
+					EComparatorType.LE);
+			
+			String message = "<html>" + CommonsConstants.PAYMENT_PENDING_MESSAGE;
+			String subject = CommonsConstants.PAYMENT_PENDING_SUBJECT;
+			if(transactiontype.equals(ETransactionType.ENTRADA)){
+				message = message.replace("TIPO_FACTURA", "compra");
+				subject = subject.replace("TIPO_FACTURA", "compra");
+			}
+			if(transactiontype.equals(ETransactionType.SALIDA)){
+				message = message.replace("TIPO_FACTURA", "venta");
+				subject = subject.replace("TIPO_FACTURA", "venta");
+			}
+			
+			String items = "";
+			for (Document document : documents) {
+				Double payValue = document.getPayValue() != null ? document.getPayValue() : 0.0;
+				Double balance = (double) Math.round(document.getTotalValue() - payValue);
+				items = items + "<p>Factura: " + document.getCode() + ",  "
+						+ StringUtility.concatName(document.getPerson().getName(), document.getPerson().getLastName())
+						+ ", Fecha de vencimiento: " + document.getExpirationDate() + ",  " + ", Total factura: "
+						+ document.getTotalValue() + ",  " + ", Saldo: " + balance + ",  " + ". </p>";
+			}
+			// Enviar por correo el listado de facturas pendientes
+			message += items + "</html>";
+			CommonsEmailService.send(CommonsConstants.MAIL_FROM, Arrays.asList(CommonsConstants.MAIL_TO.split(";")),
+					subject + " ", message);
+			log.info(strLog + "Email enviado");
+
+		} catch (Exception e) {
+			log.error(strLog + "[Exception] " + e.getMessage());
+			e.printStackTrace();
+		}
+		return documents;
 	}
 
 }
