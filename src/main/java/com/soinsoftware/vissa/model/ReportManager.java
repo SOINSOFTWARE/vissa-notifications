@@ -113,18 +113,19 @@ public class ReportManager {
 	/**
 	 * Metodo para obtener los cuadres de caja de un dia y enviarlos por correo
 	 */
-	public void dailyConciliationReport() {
+	public void dailyConciliationReport(Date reportDate) {
 		String strLog = "[dailyConciliationReport] ";
 		try {
-			Date date = DateUtils.truncate(new Date(), Calendar.DATE);
+			log.info(strLog + "[parameters] reportDate: " + reportDate);
 
-			Date endDate = DateUtils.addHours(date, 23);
-			endDate = DateUtils.addMinutes(endDate, 59);
-			endDate = DateUtils.addSeconds(endDate, 59);
+			// Si la fecha enviada como parametro es nula, se toma la fecha actual
+			if (reportDate == null) {
+				reportDate = DateUtils.truncate(new Date(), Calendar.DATE);
+			}
 
 			CashRegisterConciliationBll conciliationBll = CashRegisterConciliationBll.getInstance();
 			UserBll userBll = UserBll.getInstance();
-			List<CashConciliation> conciliations = conciliationBll.select(date);
+			List<CashConciliation> conciliations = conciliationBll.select(reportDate);
 			log.info(strLog + " conciliations: " + conciliations.size());
 
 			String message = CommonsConstants.SALESMAN_CONCILIATION_MSG;
@@ -162,7 +163,6 @@ public class ReportManager {
 					message = message.replace("SUPPLIER_PAYMENTS", String.valueOf(conciliation.getSupplierPayments()));
 					message = message.replace("SUPPLIER_LOANS", String.valueOf(conciliation.getSupplierPaymentsLoan()));
 					message = message.replace("BALANCE", String.valueOf(conciliation.getBalance()));
-
 				}
 
 				// Enviar por correo electronico el cuadre de caja para vendedor y administrador
@@ -205,18 +205,18 @@ public class ReportManager {
 			List<DocumentType> types = documentTypeBll.select(transactiontype);
 			documents = documentBll.selectByExpirationDate(types, expirationDate, EPaymentStatus.PENDING.getName(),
 					EComparatorType.LE);
-			
+
 			String message = "<html>" + CommonsConstants.PAYMENT_PENDING_MESSAGE;
 			String subject = CommonsConstants.PAYMENT_PENDING_SUBJECT;
-			if(transactiontype.equals(ETransactionType.ENTRADA)){
+			if (transactiontype.equals(ETransactionType.ENTRADA)) {
 				message = message.replace("TIPO_FACTURA", "compra");
 				subject = subject.replace("TIPO_FACTURA", "compra");
 			}
-			if(transactiontype.equals(ETransactionType.SALIDA)){
+			if (transactiontype.equals(ETransactionType.SALIDA)) {
 				message = message.replace("TIPO_FACTURA", "venta");
 				subject = subject.replace("TIPO_FACTURA", "venta");
 			}
-			
+
 			String items = "";
 			for (Document document : documents) {
 				Double payValue = document.getPayValue() != null ? document.getPayValue() : 0.0;
